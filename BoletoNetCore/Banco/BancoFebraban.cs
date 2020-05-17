@@ -44,6 +44,8 @@ namespace BoletoNetCore
                 {
                     case TipoArquivo.CNAB240:
                         return ((IBancoCNAB240)this)?.GerarDetalheRemessaCNAB240(boleto, ref numeroRegistro);
+                    case TipoArquivo.CNAB240_Pagamento_Fornecedor:
+                        return ((IBancoCNAB240PagamentoFornecedor)this)?.GerarDetalheRemessaCNAB240PagamentoFornecedor(boleto, ref numeroRegistro);
                     case TipoArquivo.CNAB400:
                         return ((IBancoCNAB400)this)?.GerarDetalheRemessaCNAB400(boleto, ref numeroRegistro);
                     default:
@@ -85,6 +87,13 @@ namespace BoletoNetCore
                         header += Environment.NewLine;
                         header += ((IBancoCNAB240)this).GerarHeaderLoteRemessaCNAB240(ref numeroArquivoRemessa, ref numeroRegistro);
                         break;
+                    case TipoArquivo.CNAB240_Pagamento_Fornecedor:
+                        // Cabeçalho do Arquivo
+                        header += ((IBancoCNAB240PagamentoFornecedor)this).GerarHeaderRemessaCNAB240PagamentoFornecedor(ref numeroArquivoRemessa, ref numeroRegistro);
+                        // Cabeçalho do Lote
+                        header += Environment.NewLine;
+                        header += ((IBancoCNAB240PagamentoFornecedor)this).GerarHeaderLoteRemessaCNAB240PagamentoFornecedor(ref numeroArquivoRemessa, ref numeroRegistro);
+                        break;
                     case TipoArquivo.CNAB400:
                         header += ((IBancoCNAB400)this).GerarHeaderRemessaCNAB400(ref numeroArquivoRemessa, ref numeroRegistro);
                         break;
@@ -123,6 +132,14 @@ namespace BoletoNetCore
                                              numeroRegistroCobrancaVinculada,  valorCobrancaVinculada,
                                              numeroRegistroCobrancaCaucionada,  valorCobrancaCaucionada,
                                              numeroRegistroCobrancaDescontada,  valorCobrancaDescontada);
+
+                    case TipoArquivo.CNAB240_Pagamento_Fornecedor:
+                        return ((IBancoCNAB240PagamentoFornecedor)this).GerarTrailerRemessaCNAB240PagamentoFornecedor(
+                                             numeroRegistroGeral, valorBoletoGeral,
+                                             numeroRegistroCobrancaSimples, valorCobrancaSimples,
+                                             numeroRegistroCobrancaVinculada, valorCobrancaVinculada,
+                                             numeroRegistroCobrancaCaucionada, valorCobrancaCaucionada,
+                                             numeroRegistroCobrancaDescontada, valorCobrancaDescontada);
 
                     case TipoArquivo.CNAB400:
                         return ((IBancoCNAB400)this).GerarTrailerRemessaCNAB400(

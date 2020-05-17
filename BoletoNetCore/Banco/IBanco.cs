@@ -107,6 +107,37 @@ namespace BoletoNetCore
     }
 
     /// <summary>
+    /// Cópia de IBancoCNAB240 específico para PagamentoFornecedor
+    /// </summary>
+    public interface IBancoCNAB240PagamentoFornecedor : IBanco
+    {
+        /// <summary>
+        /// 1 - Header de Remessa e Lote do Arquivo de Remessa
+        /// </summary>
+        /// <param name="numeroArquivoRemessa"></param>
+        /// <param name="numeroRegistro"></param>
+        /// <returns></returns>
+        string GerarHeaderRemessaCNAB240PagamentoFornecedor(ref int numeroArquivoRemessa, ref int numeroRegistro);
+        string GerarHeaderLoteRemessaCNAB240PagamentoFornecedor(ref int numeroArquivoRemessa, ref int numeroRegistro);
+        string GerarDetalheRemessaCNAB240PagamentoFornecedor(Boleto boleto, ref int registro);
+        string GerarTrailerLoteRemessaCNAB240(ref int numeroArquivoRemessa, int numeroRegistroGeral,
+            int numeroRegistroCobrancaSimples, decimal valorCobrancaSimples,
+            int numeroRegistroCobrancaVinculada, decimal valorCobrancaVinculada,
+            int numeroRegistroCobrancaCaucionada, decimal valorCobrancaCaucionada,
+            int numeroRegistroCobrancaDescontada, decimal valorCobrancaDescontada);
+
+        string GerarTrailerRemessaCNAB240PagamentoFornecedor(int numeroRegistroGeral, decimal valorBoletoGeral,
+            int numeroRegistroCobrancaSimples, decimal valorCobrancaSimples,
+            int numeroRegistroCobrancaVinculada, decimal valorCobrancaVinculada,
+            int numeroRegistroCobrancaCaucionada, decimal valorCobrancaCaucionada,
+            int numeroRegistroCobrancaDescontada, decimal valorCobrancaDescontada);
+
+        void LerHeaderRetornoCNAB240PagamentoFornecedor(ArquivoRetorno arquivoRetorno, string registro);
+        void LerDetalheRetornoCNAB240SegmentoTPagamentoFornecedor(ref Boleto boleto, string registro);
+        void LerDetalheRetornoCNAB240SegmentoUPagamentoFornecedor(ref Boleto boleto, string registro);
+    }
+
+    /// <summary>
     /// Implementa Registro Online de Boleto
     /// </summary>
     public interface IBancoOnlineRest : IBanco

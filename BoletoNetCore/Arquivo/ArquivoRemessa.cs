@@ -35,7 +35,7 @@ namespace BoletoNetCore
                     valorCobrancaDescontada = 0;
 
                 int tamanhoRegistro;
-                if (this.TipoArquivo == TipoArquivo.CNAB240)
+                if (this.TipoArquivo == TipoArquivo.CNAB240 || this.TipoArquivo == TipoArquivo.CNAB240_Pagamento_Fornecedor)
                     tamanhoRegistro = 240;
                 else
                     tamanhoRegistro = 400;

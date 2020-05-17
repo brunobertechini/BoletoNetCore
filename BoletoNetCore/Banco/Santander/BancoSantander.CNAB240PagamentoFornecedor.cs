@@ -5,6 +5,14 @@ using static System.String;
 
 namespace BoletoNetCore
 {
+    /// <summary>
+    /// Banco Santander
+    /// Cash Management
+    /// Pagamento a Fornecedores
+    /// Manual de Troca de Arquivos
+    /// Layout CNAB 240 Posições
+    /// Versão: YLEC_2403 V11_01/2019
+    /// </summary>
     partial class BancoSantander : IBancoCNAB240PagamentoFornecedor
     {
         public string GerarHeaderRemessaCNAB240PagamentoFornecedor(ref int numeroArquivoRemessa, ref int numeroRegistro)
@@ -12,23 +20,42 @@ namespace BoletoNetCore
             try
             {
                 var reg = new TRegistroEDI();
-                reg.Adicionar(TTiposDadoEDI.ediNumericoSemSeparador_, 0001, 003, 0, "033", '0');
-                reg.Adicionar(TTiposDadoEDI.ediNumericoSemSeparador_, 0004, 004, 0, "0000", '0');
-                reg.Adicionar(TTiposDadoEDI.ediNumericoSemSeparador_, 0008, 001, 0, "0", '0');
-                reg.Adicionar(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0009, 008, 0, Empty, ' ');
-                reg.Adicionar(TTiposDadoEDI.ediNumericoSemSeparador_, 0017, 001, 0, Beneficiario.TipoCPFCNPJ("0"), '0');
-                reg.Adicionar(TTiposDadoEDI.ediNumericoSemSeparador_, 0018, 015, 0, Beneficiario.CPFCNPJ, '0');
-                reg.Adicionar(TTiposDadoEDI.ediNumericoSemSeparador_, 0033, 015, 0, Beneficiario.CodigoTransmissao, '0');
-                reg.Adicionar(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0048, 025, 0, Empty, ' ');
-                reg.Adicionar(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0073, 030, 0, Beneficiario.Nome, ' ');
-                reg.Adicionar(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0103, 030, 0, "BANCO SANTANDER", ' ');
-                reg.Adicionar(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0133, 010, 0, Empty, ' ');
-                reg.Adicionar(TTiposDadoEDI.ediNumericoSemSeparador_, 0143, 001, 0, "1", '0');
-                reg.Adicionar(TTiposDadoEDI.ediDataDDMMAAAA_________, 0144, 008, 0, DateTime.Now, ' ');
-                reg.Adicionar(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0152, 006, 0, Empty, ' ');
-                reg.Adicionar(TTiposDadoEDI.ediNumericoSemSeparador_, 0158, 006, 0, numeroArquivoRemessa, '0');
-                reg.Adicionar(TTiposDadoEDI.ediNumericoSemSeparador_, 0164, 003, 0, "040", '0');
-                reg.Adicionar(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0167, 074, 0, Empty, ' ');
+
+                // Sem alteraçoes nos campos abaixo (comparado ao CNAB240 boleto
+                reg.Adicionar(TTiposDadoEDI.ediNumericoSemSeparador_, 0001, 003, 0, "033", '0'); // Código do Banco 001-003 9(003) | Conteúdo: 033
+                reg.Adicionar(TTiposDadoEDI.ediNumericoSemSeparador_, 0004, 004, 0, "0000", '0'); // Lote de Serviço 004-007 9(004) | Conteúdo: 0000
+                reg.Adicionar(TTiposDadoEDI.ediNumericoSemSeparador_, 0008, 001, 0, "0", '0'); // Tipo de Registro 008-008 9(001) | Conteúdo: 0
+
+                // TODO [Cnab240PagamentoFornecedor] Header Arquivo: Campos alterados (posicoes/tipos)
+                reg.Adicionar(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0009, 009, 0, Empty, ' '); // Filler 009-017 X(009) | Conteúdo: Brancos
+                reg.Adicionar(TTiposDadoEDI.ediNumericoSemSeparador_, 0018, 001, 0, Beneficiario.TipoCPFCNPJ("0"), '0'); // Tipo de Inscrição da Empresa 018-018 9(001) | Conteúdo: Nota G023
+                reg.Adicionar(TTiposDadoEDI.ediNumericoSemSeparador_, 0019, 014, 0, Beneficiario.CPFCNPJ, '0'); // Número Inscrição da Empresa 019-032 9(014) | Conteúdo: CNPJ/CPF
+                reg.Adicionar(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0033, 020, 0, Beneficiario.CodigoTransmissao, '0'); // Código do Convenio no Banco 033-052 X(020) | Conteúdo: Nota G009
+                reg.Adicionar(TTiposDadoEDI.ediNumericoSemSeparador_, 0053, 005, 0, Empty, ' '); // Agência Mantenedora da Conta 053-057 9(005) | Conteúdo: Nota G003
+                reg.Adicionar(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0058, 001, 0, Empty, ' '); // Dígito Verificador da Agência 058-058 X(001) | Conteúdo: Opcional
+                reg.Adicionar(TTiposDadoEDI.ediNumericoSemSeparador_, 0059, 012, 0, Empty, ' '); // Número da Conta Corrente 059-070 9(012) | Conteúdo: Nota G003
+                reg.Adicionar(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0071, 001, 0, Empty, ' '); // Dígito Verificador da Conta 071-071 X(001) | Conteúdo: Nota G003
+                reg.Adicionar(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0072, 001, 0, Empty, ' '); // Dígito Verificador da Agencia/Conta 072-072 X(001) | Conteúdo: Branco
+
+                // Sem alteraçoes nos campos abaixo (comparado ao CNAB240 boleto
+                reg.Adicionar(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0073, 030, 0, Beneficiario.Nome, ' '); // Nome da Empresa 073-102 X(030) | Conteúdo: Obrigatório
+                reg.Adicionar(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0103, 030, 0, "BANCO SANTANDER", ' '); // Nome do Banco 103-132 X(030) | Conteúdo: Banco Santander
+                reg.Adicionar(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0133, 010, 0, Empty, ' '); // Filler 133-142 X(010) | Conteúdo: Brancos
+                reg.Adicionar(TTiposDadoEDI.ediNumericoSemSeparador_, 0143, 001, 0, "1", '0'); // Código Remessa / Retorno 143-143 9(001) | Conteúdo: 1=Remessa / 2=Retorno
+                reg.Adicionar(TTiposDadoEDI.ediDataDDMMAAAA_________, 0144, 008, 0, DateTime.Now, ' '); // Data da Geração do Arquivo 144-151 9(008) | Conteúdo: DDMMAAAA
+                reg.Adicionar(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0152, 006, 0, Empty, ' '); // Hora da Geração do Arquivo 152-157 9(006) | Conteúdo: HHMMSS
+                reg.Adicionar(TTiposDadoEDI.ediNumericoSemSeparador_, 0158, 006, 0, numeroArquivoRemessa, '0'); // Número Sequencial do Arquivo 158-163 9(006) | Conteúdo: Nota G010
+                reg.Adicionar(TTiposDadoEDI.ediNumericoSemSeparador_, 0164, 003, 0, "060", '0'); // Número da Versão do Layout 164-166 9(003) | Conteúdo: 060
+
+                // Campos alterados (dados finais -- especialmente ocorrencias para retorno) -- valor anterior = EMPTY(74)
+                reg.Adicionar(TTiposDadoEDI.ediNumericoSemSeparador_, 0167, 005, 0, Empty, ' '); // Densidade de Gravação Arquivo 167-171 9(005) | Conteúdo: Opcional
+                reg.Adicionar(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0172, 020, 0, Empty, ' '); // Uso Reservado do Banco 172-191 X(020) | Conteúdo: Brancos
+                reg.Adicionar(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0192, 020, 0, Empty, ' '); // Uso Reservado da Empresa 192-211 X(020) | Conteúdo: Opcional
+                reg.Adicionar(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0212, 019, 0, Empty, ' '); // Filler 212-230 X(019) | Conteúdo: Brancos
+                reg.Adicionar(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0231, 010, 0, Empty, ' '); // Ocorrências para o Retorno 231-240 X(010) | Conteúdo: Nota G007
+
+                // **********************************************
+
                 reg.CodificarLinha();
                 return reg.LinhaRegistro;
             }
@@ -43,25 +70,42 @@ namespace BoletoNetCore
             try
             {
                 var reg = new TRegistroEDI();
-                reg.Adicionar(TTiposDadoEDI.ediNumericoSemSeparador_, 0001, 003, 0, "033", '0');
-                reg.Adicionar(TTiposDadoEDI.ediNumericoSemSeparador_, 0004, 004, 0, "0001", '0');
-                reg.Adicionar(TTiposDadoEDI.ediNumericoSemSeparador_, 0008, 001, 0, "1", '0');
-                reg.Adicionar(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0009, 001, 0, "R", ' ');
-                reg.Adicionar(TTiposDadoEDI.ediNumericoSemSeparador_, 0010, 002, 0, "01", '0');
-                reg.Adicionar(TTiposDadoEDI.ediNumericoSemSeparador_, 0012, 002, 0, Empty, ' ');
-                reg.Adicionar(TTiposDadoEDI.ediNumericoSemSeparador_, 0014, 003, 0, "030", '0');
-                reg.Adicionar(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0017, 001, 0, Empty, ' ');
-                reg.Adicionar(TTiposDadoEDI.ediNumericoSemSeparador_, 0018, 001, 0, Beneficiario.TipoCPFCNPJ("0"), '0');
-                reg.Adicionar(TTiposDadoEDI.ediNumericoSemSeparador_, 0019, 015, 0, Beneficiario.CPFCNPJ, '0');
-                reg.Adicionar(TTiposDadoEDI.ediNumericoSemSeparador_, 0034, 020, 0, Empty, ' ');
-                reg.Adicionar(TTiposDadoEDI.ediNumericoSemSeparador_, 0054, 015, 0, Beneficiario.CodigoTransmissao, '0');
-                reg.Adicionar(TTiposDadoEDI.ediNumericoSemSeparador_, 0069, 005, 0, Empty, ' ');
-                reg.Adicionar(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0074, 030, 0, Beneficiario.Nome, ' ');
-                reg.Adicionar(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0104, 040, 0, Empty, ' ');
-                reg.Adicionar(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0144, 040, 0, Empty, ' ');
-                reg.Adicionar(TTiposDadoEDI.ediNumericoSemSeparador_, 0184, 008, 0, numeroArquivoRemessa, '0');
-                reg.Adicionar(TTiposDadoEDI.ediDataDDMMAAAA_________, 0192, 008, 0, DateTime.Now, ' ');
-                reg.Adicionar(TTiposDadoEDI.ediNumericoSemSeparador_, 0200, 041, 0, Empty, ' ');
+
+                // Sem alteraçoes nos campos abaixo (comparado ao CNAB240 boleto
+                reg.Adicionar(TTiposDadoEDI.ediNumericoSemSeparador_, 0001, 003, 0, "033", '0'); // Código do Banco 001-003 9(003) | Conteúdo: 033
+                reg.Adicionar(TTiposDadoEDI.ediNumericoSemSeparador_, 0004, 004, 0, "0001", '0'); // Lote de Serviço 004-007 9(004) | Conteúdo: 0000
+                reg.Adicionar(TTiposDadoEDI.ediNumericoSemSeparador_, 0008, 001, 0, "1", '0'); // Tipo de Registro 008-008 9(001) | Conteúdo: 1
+
+                // Campos alterados (posicoes/tipos) | TODO [Cnab240PagamentoFornecedor] Header Lote
+                reg.Adicionar(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0009, 001, 0, "C", ' '); // Tipo da Operação 009-009 X(001) | Conteúdo: 'C' - Crédito
+                reg.Adicionar(TTiposDadoEDI.ediNumericoSemSeparador_, 0010, 002, 0, "98", '0'); // Tipo de Serviço 010-011 9(002) | Conteúdo: Nota G015 (Temporariamente fixo para 98 - Pagamentos Diversos)
+                reg.Adicionar(TTiposDadoEDI.ediNumericoSemSeparador_, 0012, 002, 0, "01", ' '); // Forma de Lançamento 012-013 9(002) | Conteúdo: Nota G002 (Temporariamente fixo para 01 = Crédito em Conta Corrente)
+                reg.Adicionar(TTiposDadoEDI.ediNumericoSemSeparador_, 0014, 003, 0, "031", '0'); // Número da Versão do Lote 014-016 9(003) | Conteúdo: 031 (Nota G031)
+
+                // Sem alteraçoes nos campos abaixo (comparado ao CNAB240 boleto
+                reg.Adicionar(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0017, 001, 0, Empty, ' '); // Filler 017-017 X(001) | Conteúdo: Branco
+                reg.Adicionar(TTiposDadoEDI.ediNumericoSemSeparador_, 0018, 001, 0, Beneficiario.TipoCPFCNPJ("0"), '0'); // Tipo de Inscrição da Empresa 018-018 9(001) | Conteúdo: Nota G023
+
+                // Campos alterados (posicoes/tipos) | TODO [Cnab240PagamentoFornecedor] Header Lote
+                reg.Adicionar(TTiposDadoEDI.ediNumericoSemSeparador_, 0019, 014, 0, Beneficiario.CPFCNPJ, '0'); // Número de Inscrição da Empresa 019-032 9(014) | Conteúdo: CNPJ/CPF
+                reg.Adicionar(TTiposDadoEDI.ediAlphaAliDireita______, 0033, 020, 0, Beneficiario.CodigoTransmissao, ' '); // Código do Convenio no Banco 033-052 X(020) | Conteúdo: Nota G009
+                reg.Adicionar(TTiposDadoEDI.ediNumericoSemSeparador_, 0053, 005, 0, Empty, '0'); // Agência Mantenedora da Conta 053-057 9(005) | Conteúdo: Nota G003
+                reg.Adicionar(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0058, 001, 0, Empty, ' '); // Dígito Verificador da Agência 058-058 X(001) | Conteúdo: Opcional
+                reg.Adicionar(TTiposDadoEDI.ediNumericoSemSeparador_, 0059, 012, 0, Empty, ' '); // Número da Conta Corrente 059-070 9(012) | Conteúdo: Nota G003
+                reg.Adicionar(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0071, 001, 0, Empty, ' '); // Dígito Verificador da Conta 071-071 X(001) | Conteúdo: Nota G003
+                reg.Adicionar(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0072, 001, 0, Empty, ' '); // Dígito Verificador da Agencia/Conta 072-072 X(001) | Conteúdo: Branco
+                reg.Adicionar(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0073, 030, 0, Beneficiario.Nome, ' '); // Nome da Empresa 073-102 X(030) | Conteúdo: Obrigatório
+                reg.Adicionar(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0103, 040, 0, Empty, ' '); // Informação 1 - Mensagem 103-142 X(040) | Conteúdo: Nota G016
+                reg.Adicionar(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0143, 030, 0, Empty, ' '); // Endereço 143-172 X(030) | Conteúdo: Opcional
+                reg.Adicionar(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0173, 005, 0, Empty, ' '); // Endereço 173-177 9(005) | Conteúdo: Opcional
+                reg.Adicionar(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0178, 015, 0, Empty, ' '); // Complemento do Endereço 178-192 X(015) | Conteúdo: Opcional
+                reg.Adicionar(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0193, 020, 0, Empty, ' '); // Cidade 193-212 X(020) | Conteúdo: Opcional
+                reg.Adicionar(TTiposDadoEDI.ediNumericoSemSeparador_, 0213, 005, 0, Empty, ' '); // CEP 213-217 9(005) | Conteúdo: Opcional
+                reg.Adicionar(TTiposDadoEDI.ediNumericoSemSeparador_, 0218, 003, 0, Empty, ' '); // Complemento do CEP 218-220 9(003) | Conteúdo: Opcional
+                reg.Adicionar(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0221, 002, 0, Empty, ' '); // UF 221-222 X(002) | Conteúdo: Opcional
+                reg.Adicionar(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0223, 008, 0, Empty, ' '); // Filler 223-230 X(008) | Conteúdo: Brancos
+                reg.Adicionar(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0231, 010, 0, Empty, ' '); // Ocorrências para o Retorno 231-240 X(010) | Conteúdo: Nota G007
+
                 reg.CodificarLinha();
                 return reg.LinhaRegistro;
             }
